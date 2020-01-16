@@ -1,14 +1,17 @@
 package cn.kurong;
 
 import cn.kurong.entity.User;
-import cn.kurong.mapper.UserMapper;
+import cn.kurong.entity.UserEntity;
+import cn.kurong.mapper.UserEntityMapper;
 import cn.kurong.service.IUserService;
+import cn.kurong.service.UserEntityService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.sql.Wrapper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +20,12 @@ class MybatisPlusApplicationTests {
 
 	@Autowired
 	IUserService userService;
+
+	@Autowired
+	UserEntityService userEntityService;
+
+	@Autowired
+	UserEntityMapper userEntityMapper;
 
 	@Test
 	void contextLoads() {
@@ -51,5 +60,26 @@ class MybatisPlusApplicationTests {
 	public void listUserWrapperTest() {
 		List<User> userList = userService.list(new QueryWrapper<User>().ge("age", 21).likeRight("name", "枯荣"));
 		userList.stream().forEach(System.out::println);
+	}
+
+	@Test
+	public void enumTest() {
+		List<UserEntity> userList = userEntityService.list();
+		userList.stream().forEach(System.out::println);
+
+	}
+
+	@Test
+	public void queryUserForPage() {
+		IPage<UserEntity> userPage = userEntityService.listUserEntityByPage(new Page<>(2, 3), null);
+		List<UserEntity> list = userPage.getRecords();
+		list.stream().forEach(System.out::println);
+	}
+
+	@Test
+	public void listAllUserEntity() {
+		IPage<UserEntity> pageInfo = new Page<>(2, 3);
+		pageInfo.setRecords(userEntityMapper.listAllUserEntity(pageInfo));
+		pageInfo.getRecords().stream().forEach(System.out::println);
 	}
 }
